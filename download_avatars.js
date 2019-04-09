@@ -20,13 +20,7 @@ function getRepoContributors(repoOwner, repoName, cb) {
 
     request(options, function(err, res, body) {
       var data = JSON.parse(body);
-      var avatarObject = [];
 
-      for (var i = 0; i < data.length; i++){
-        var url = data[i]['avatar_url']
-        var filePath = "avatars/" + data[i]['login'] + ".jpg";
-        downloadImageByURL(url, filePath);
-      }
       cb(err, data);
     });
 }
@@ -43,4 +37,10 @@ function downloadImageByURL(url, filePath) {
 }
 
 getRepoContributors(repoOwner, repoName, function(err, result) {
+
+  for (var i = 0; i < result.length; i++){
+    var url = result[i]['avatar_url']
+    var filePath = "avatars/" + result[i]['login'] + ".jpg";
+    downloadImageByURL(url, filePath);
+  }
 });
