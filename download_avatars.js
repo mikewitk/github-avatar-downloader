@@ -4,32 +4,32 @@ var fs = require('fs');
 var repoOwner = process.argv[2];
 var repoName = process.argv[3];
 
-console.log('Welcome to the GitHub Avatar Downloader!');
+ if (process.argv.length < 4){
+    throw "Missing Arguments. Please input repository Owner and Name";
+  }
 
 function getRepoContributors(repoOwner, repoName, cb) {
 
-  var options = {
-    url: "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/contributors",
-    headers: {
-      'User-Agent': 'request',
-      'Authorization': 'token ' + secrets.GITHUB_TOKEN
-    }
-  };
+    var options = {
+      url: "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/contributors",
+      headers: {
+        'User-Agent': 'request',
+        'Authorization': 'token ' + secrets.GITHUB_TOKEN
+      }
+    };
 
-  request(options, function(err, res, body) {
-    var data = JSON.parse(body);
-    var avatarObject = [];
+    request(options, function(err, res, body) {
+      var data = JSON.parse(body);
+      var avatarObject = [];
 
-    for (var i = 0; i < data.length; i++){
-      // avatarObject.push(data[i]['avatar_url']);
-      var url = data[i]['avatar_url']
-      var filePath = "avatars/" + data[i]['login'] + ".jpg";
-      downloadImageByURL(url, filePath);
-    }
-    cb(err, data);
-  });
+      for (var i = 0; i < data.length; i++){
+        var url = data[i]['avatar_url']
+        var filePath = "avatars/" + data[i]['login'] + ".jpg";
+        downloadImageByURL(url, filePath);
+      }
+      cb(err, data);
+    });
 }
-
 
 function downloadImageByURL(url, filePath) {
   request.get(url)
@@ -41,7 +41,6 @@ function downloadImageByURL(url, filePath) {
       console.log("Download finished")
     }))
 }
-
 
 getRepoContributors(repoOwner, repoName, function(err, result) {
 });
